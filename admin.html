@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Área Administrativa - Transparência na Alimentação</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-gray-100 font-['Inter'] text-gray-800">
+    
+    <!-- Login Screen -->
+    <div id="login-screen" class="min-h-screen flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-8">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="shield" class="w-8 h-8 text-emerald-600"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-800">Área do Funcionário</h1>
+                <p class="text-gray-600 mt-2">Digite o código de acesso para gerenciar</p>
+            </div>
+
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Código de Acesso</label>
+                    <input type="password" id="access-code" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition" placeholder="Digite o código">
+                    <p class="text-xs text-gray-500 mt-1">Código padrão: ESCOLA2024</p>
+                </div>
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-lg transition flex items-center justify-center gap-2">
+                    <i data-lucide="log-in" class="w-5 h-5"></i>
+                    Entrar
+                </button>
+            </form>
+
+            <div id="login-error" class="hidden mt-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm text-center">
+                Código incorreto. Tente novamente.
+            </div>
+
+            <a href="index.html" class="block text-center mt-6 text-emerald-600 hover:text-emerald-700 text-sm font-medium">
+                ← Voltar ao Portal do Aluno
+            </a>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="admin-dashboard" class="hidden min-h-screen">
+        <!-- Header -->
+        <header class="bg-emerald-700 text-white shadow-lg">
+            <div class="container mx-auto px-4 py-4">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="settings" class="w-6 h-6"></i>
+                        <h1 class="text-xl font-bold">Painel Administrativo</h1>
+                    </div>
+                    <button onclick="logout()" class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">
+                        <i data-lucide="log-out" class="w-4 h-4"></i>
+                        Sair
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="bg-white shadow-sm border-b border-gray-200">
+            <div class="container mx-auto px-4">
+                <div class="flex space-x-1 overflow-x-auto py-2">
+                    <button onclick="showAdminTab('menu')" id="admin-tab-menu" class="admin-tab active whitespace-nowrap px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">
+                        <i data-lucide="calendar" class="w-4 h-4"></i>
+                        Gerenciar Cardápio
+                    </button>
+                    <button onclick="showAdminTab('supplies')" id="admin-tab-supplies" class="admin-tab whitespace-nowrap px-4 py-2 rounded-lg text-sm font-medium transition text-gray-600 hover:text-emerald-600 flex items-center gap-2">
+                        <i data-lucide="package" class="w-4 h-4"></i>
+                        Cadastrar Mantimentos
+                    </button>
+                    <button onclick="showAdminTab('notifications')" id="admin-tab-notifications" class="admin-tab whitespace-nowrap px-4 py-2 rounded-lg text-sm font-medium transition text-gray-600 hover:text-emerald-600 flex items-center gap-2">
+                        <i data-lucide="bell" class="w-4 h-4"></i>
+                        Notificações
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Content -->
+        <main class="container mx-auto px-4 py-8">
+            
+            <!-- Tab: Gerenciar Cardápio -->
+            <div id="admin-content-menu" class="admin-content space-y-6">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+                    <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                        <i data-lucide="edit-3" class="text-emerald-600"></i>
+                        Atualizar Cardápio Semanal
+                    </h2>
+                    
+                    <div class="grid gap-6 md:grid-cols-2">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Dia da Semana</label>
+                            <select id="menu-day" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 outline-none">
+                                <option value="Segunda">Segunda-feira</option>
+                                <option value="Terça">Terça-feira</option>
+                                <option value="Quarta">Quarta-feira</option>
+                                <option value="Quinta">Quinta-feira</option>
+                                <option value="Sexta">Sexta-feira</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Turno</label>
+                            <select id="menu-shift" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 outline-none">
+                                <option value="manha">Turno da Manhã</option>
+                                <option value="tarde">Turno da Tarde</option>
+                            </select>
+                        </div>
+
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Refeição Principal</label>
+                            <input type="text" id="menu-main" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Ex: Arroz, Feijão, Carne, Salada">
+                        </div>
+
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Complemento / Sobremesa</label>
+                            <input type="text" id="menu-dessert" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Ex: Fruta, Suco, Pão">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Calorias (kcal)</label>
+                            <input type="text" id="menu-calories" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Ex: 450">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Proteínas (g)</label>
+                            <input type="text" id="menu-protein" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Ex: 15">
+                        </div>
+                    </div>
+
+                    <button onclick="saveMenu()" class="mt-6 w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-lg transition flex items-center justify-center gap-2">
+                        <i data-lucide="save" class="w-5 h-5"></i>
+                        Salvar Refeição
+                    </button>
+                </div>
+
+                <!-- Preview -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+                    <h3 class="font-bold text-lg mb-4">Visualização Atual</h3>
+                    <div id="current-menu-preview" class="space-y-2">
+                        <p class="text-gray-500 text-sm">Selecione um dia para ver o cardápio atual</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Cadastrar Mantimentos -->
+            <div id="admin-content-supplies" class="admin-content hidden space-y-6">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+                    <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                        <i data-lucide="plus-circle" class="text-emerald-600"></i>
+                        Registrar Nova Entrega
+                    </h2>
+
+                    <div class="grid gap-6 md:grid-cols-2">
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Item</label>
+                            <input type="text" id="supply-item" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Ex: Arroz tipo 1, Feijão carioca...">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Quantidade</label>
+                            <input type="text" id="supply-quantity" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Ex: 50 kg">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Data de Recebimento</label>
+                            <input type="date" id="supply-date" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 outline-none">
+                        </div>
+
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Fornecedor / Origem</label>
+                            <input type="text" id="supply-origin" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Ex: PNAE/FNDE - Lote 123">
+                        </div>
+                    </div>
+
+                    <button onclick="saveSupply()" class="mt-6 w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-lg transition flex items-center justify-center gap-2">
+                        <i data-lucide="save" class="w-5 h-5"></i>
+                        Registrar Entrega
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h3 class="font-bold text-lg">Histórico de Entregas</h3>
+                    </div>
+                    <div id="admin-supplies-list" class="divide-y divide-gray-100">
+                        <!-- Content by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Notificações -->
+            <div id="admin-content-notifications" class="admin-content hidden space-y-6">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+                    <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                        <i data-lucide="bell" class="text-emerald-600"></i>
+                        Enviar Notificação
+                    </h2>
+                    <p class="text-sm text-gray-600 mb-4">As notificações aparecerão para todos os alunos ao acessarem o aplicativo.</p>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Título</label>
+                            <input type="text" id="notif-title" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Ex: Atualização de Cardápio">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Mensagem</label>
+                            <textarea id="notif-message" rows="3" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Digite a mensagem..."></textarea>
+                        </div>
+                        <button onclick="sendNotification()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition flex items-center justify-center gap-2">
+                            <i data-lucide="send" class="w-5 h-5"></i>
+                            Enviar Notificação
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        lucide.createIcons();
+        
+        // Admin specific code
+        const CORRECT_CODE = 'ESCOLA2024';
+        
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const code = document.getElementById('access-code').value;
+            if (code === CORRECT_CODE) {
+                localStorage.setItem('adminLoggedIn', 'true');
+                showDashboard();
+            } else {
+                document.getElementById('login-error').classList.remove('hidden');
+            }
+        });
+
+        function showDashboard() {
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('admin-dashboard').classList.remove('hidden');
+            loadAdminData();
+        }
+
+        function logout() {
+            localStorage.removeItem('adminLoggedIn');
+            location.reload();
+        }
+
+        // Check if already logged in
+        if (localStorage.getItem('adminLoggedIn') === 'true') {
+            showDashboard();
+        }
+
+        function showAdminTab(tabName) {
+            // Hide all contents
+            document.querySelectorAll('.admin-content').forEach(el => el.classList.add('hidden'));
+            // Remove active from all tabs
+            document.querySelectorAll('.admin-tab').forEach(el => {
+                el.classList.remove('active', 'bg-emerald-50', 'text-emerald-700');
+                el.classList.add('text-gray-600');
+            });
+            
+            // Show selected
+            document.getElementById(`admin-content-${tabName}`).classList.remove('hidden');
+            const activeTab = document.getElementById(`admin-tab-${tabName}`);
+            activeTab.classList.add('active', 'bg-emerald-50', 'text-emerald-700');
+            activeTab.classList.remove('text-gray-600');
+        }
+
+        function saveMenu() {
+            const day = document.getElementById('menu-day').value;
+            const shift = document.getElementById('menu-shift').value;
+            const main = document.getElementById('menu-main').value;
+            const dessert = document.getElementById('menu-dessert').value;
+            const calories = document.getElementById('menu-calories').value;
+            const protein = document.getElementById('menu-protein').value;
+
+            if (!main) {
+                alert('Preencha pelo menos a refeição principal');
+                return;
+            }
+
+            const menuData = JSON.parse(localStorage.getItem('weeklyMenu') || '{}');
+            if (!menuData[shift]) menuData[shift] = {};
+            
+            menuData[shift][day] = {
+                main: main,
+                dessert: dessert || 'Não especificado',
+                calories: calories || '-',
+                protein: protein || '-'
+            };
+
+            localStorage.setItem('weeklyMenu', JSON.stringify(menuData));
+            alert('Cardápio salvo com sucesso!');
+            updatePreview();
+        }
+
+        function updatePreview() {
+            const day = document.getElementById('menu-day').value;
+            const shift = document.getElementById('menu-shift').value;
+            const menuData = JSON.parse(localStorage.getItem('weeklyMenu') || '{}');
+            
+            const preview = document.getElementById('current-menu-preview');
+            if (menuData[shift] && menuData[shift][day]) {
+                const item = menuData[shift][day];
+                preview.innerHTML = `
+                    <div class="bg-emerald-50 p-4 rounded-lg border border-emerald-200">
+                        <h4 class="font-bold text-emerald-800">${day} - ${shift === 'manha' ? 'Turno da Manhã' : 'Turno da Tarde'}</h4>
+                        <p class="text-emerald-700 mt-1"><strong>Principal:</strong> ${item.main}</p>
+                        <p class="text-emerald-700"><strong>Complemento:</strong> ${item.dessert}</p>
+                        <p class="text-emerald-600 text-sm mt-2">Calorias: ${item.calories} | Proteínas: ${item.protein}</p>
+                    </div>
+                `;
+            } else {
+                preview.innerHTML = `<p class="text-gray-500 text-sm">Nenhum cardápio cadastrado para ${day} (${shift === 'manha' ? 'Manhã' : 'Tarde'})</p>`;
+            }
+        }
+
+        document.getElementById('menu-day').addEventListener('change', updatePreview);
+        document.getElementById('menu-shift').addEventListener('change', updatePreview);
+
+        function saveSupply() {
+            const item = document.getElementById('supply-item').value;
+            const quantity = document.getElementById('supply-quantity').value;
+            const date = document.getElementById('supply-date').value;
+            const origin = document.getElementById('supply-origin').value;
+
+            if (!item || !quantity) {
+                alert('Preencha o item e a quantidade');
+                return;
+            }
+
+            const supplies = JSON.parse(localStorage.getItem('supplies') || '[]');
+            supplies.unshift({
+                item,
+                quantity,
+                date: date || new Date().toISOString().split('T')[0],
+                origin: origin || 'PNAE/FNDE'
+            });
+
+            localStorage.setItem('supplies', JSON.stringify(supplies));
+            alert('Mantimento registrado!');
+            
+            // Clear form
+            document.getElementById('supply-item').value = '';
+            document.getElementById('supply-quantity').value = '';
+            loadSuppliesList();
+        }
+
+        function loadSuppliesList() {
+            const supplies = JSON.parse(localStorage.getItem('supplies') || '[]');
+            const container = document.getElementById('admin-supplies-list');
+            
+            if (supplies.length === 0) {
+                container.innerHTML = '<div class="p-6 text-center text-gray-500">Nenhum registro encontrado</div>';
+                return;
+            }
+
+            container.innerHTML = supplies.map((s, index) => `
+                <div class="px-6 py-4 flex justify-between items-center hover:bg-gray-50">
+                    <div>
+                        <p class="font-medium text-gray-900">${s.item}</p>
+                        <p class="text-sm text-gray-600">${s.quantity} • ${s.origin}</p>
+                        <p class="text-xs text-gray-400 mt-1">Recebido em: ${s.date}</p>
+                    </div>
+                    <button onclick="deleteSupply(${index})" class="text-red-600 hover:text-red-800 p-2">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            `).join('');
+            
+            lucide.createIcons();
+        }
+
+        function deleteSupply(index) {
+            const supplies = JSON.parse(localStorage.getItem('supplies') || '[]');
+            supplies.splice(index, 1);
+            localStorage.setItem('supplies', JSON.stringify(supplies));
+            loadSuppliesList();
+        }
+
+        function sendNotification() {
+            const title = document.getElementById('notif-title').value;
+            const message = document.getElementById('notif-message').value;
+            
+            if (!title || !message) {
+                alert('Preencha título e mensagem');
+                return;
+            }
+
+            localStorage.setItem('notification', JSON.stringify({
+                title,
+                message,
+                date: new Date().toISOString()
+            }));
+
+            alert('Notificação enviada! Os alunos verão ao acessar o aplicativo.');
+            document.getElementById('notif-title').value = '';
+            document.getElementById('notif-message').value = '';
+        }
+
+        function loadAdminData() {
+            updatePreview();
+            loadSuppliesList();
+        }
+
+        // Initialize
+        document.getElementById('supply-date').valueAsDate = new Date();
+    </script>
+</body>
+</html>
